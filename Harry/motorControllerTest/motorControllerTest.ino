@@ -1,11 +1,17 @@
-//motor controller code
-
+//rewritten controll code on NASA robot
+/*
+ * implemented 
+ */
 int motorOneAddress = 128;
 int motorOnePin = 1;
 
 void setup() {
   Serial.begin(9600); //pc connection
   pinMode(motorOnePin, OUTPUT);
+
+  setMinVoltage(motorOneAddress, 0);
+  setMaxVoltage(motorOneAddress, 25);
+  setBaudRate(motorOneAddress, 9600);
 }
 
 void loop() {
@@ -72,20 +78,11 @@ bool setMaxVoltage(int address, int desiredMaxVoltage) {
 }
 
 //command 15 set baud rate
-bool setBaudRate(int address, int baudRate) {
+bool setBaudRate(int address, int value) {
   int command = 15;
-  int acceptableBaudRates[] {2400, 9600, 19200, 38400, 115200};
-  //test if baudRate is an acceptable one
-  bool contains = false;
-  for(int i=0; i<sizeof(acceptableBaudRates); i++) {
-    if(baudRate==acceptableBaudRates[i]) {
-      contains=true;
-    }
-  }
-  if(!contains) {
+  if(value<1 || value>5) {
     return(false);
   }
-
   sendSerialPacket(address, command, baudRate);
   return(true);
 }
