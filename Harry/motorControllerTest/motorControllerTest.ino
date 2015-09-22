@@ -1,6 +1,8 @@
 //rewritten controll code on NASA robot
 /*
- * implemented 
+ * TODO:
+ *  some way to receive controls?
+ *  address extra motor controller (each motor controller can control 2 motors
  */
 int motorOneAddress = 128;
 int motorOnePin = 1;
@@ -83,7 +85,7 @@ bool setBaudRate(int address, int value) {
   if(value<1 || value>5) {
     return(false);
   }
-  sendSerialPacket(address, command, baudRate);
+  sendSerialPacket(address, command, value);
   return(true);
 }
 
