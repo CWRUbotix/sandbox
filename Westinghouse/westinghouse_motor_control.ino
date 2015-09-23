@@ -1,8 +1,8 @@
 #include <Servo.h>
-#define THROTTLE 2
-#define STEERING 3
-#define LEFT 4
-#define RIGHT 5
+int pinThrottle = 2;
+int pinSteering = 3;
+int pinLeftMotor = 4;
+int pinRightMotor = 5;
 
 volatile unsigned long throttleStart;
 volatile unsigned long throttleOut;
@@ -12,43 +12,47 @@ volatile unsigned long steeringOut;
 Servo leftMotor;
 Servo rightMotor;
 
-void startThrottleTime ()
-{
-  throttleStart = micros ();
+// On change on throttle pin
+void throttleChange() {
+	if(digitalRead(pinThrottle) {
+		throttleStart = micros();
+	} else {
+		throttleOut = (micros() - throttleStart - 1000) * 180 / 1000;
+	}
 }
 
-void stopThrottleTime ()
-{
-  throttleOut = micros () - throttleStart;
-  throttleOut = (throttleOut - 1000) * 180 / 1000;
+// On change on throttle pin
+void steeringChange() {
+	if(digitalRead(pinSteering) {
+		steeringStart = micros();
+	} else {
+		steeringOut = (micros() - steeringStart - 1000) * 180 / 1000;
+	}
 }
 
-void startSteeringTime ()
-{
-  steeringStart = micros ();
-}
-
-void stopSteeringTime ()
-{
-  steeringOut = micros () - steeringStart;
-  steeringOut = (steeringOut - 1000) * 180 / 1000;
-}
-
+// Setup Loop
 void setup ()
 {
-  attachInterrupt (digitalPinToInterrupt (THROTTLE), startThrottleTime, RISING);
-  attachInterrupt (digitalPinToInterrupt (THROTTLE), stopThrottleTime, LOW);
-  attachInterrupt (digitalPinToInterrupt (STEERING), startSteeringTime, RISING);
-  attachInterrupt (digitalPinToInterrupt (STEERING), stopSteeringTime, LOW); 
-  pinMode (THROTTLE, INPUT);
-  pinMode (STEERING, INPUT);
-  leftMotor.attach (LEFT);
-  rightMotor.attach (RIGHT);
+	// Define pin directions
+	pinMode(pinThrottle, INPUT);
+	pinMode(pinSteering, INPUT);
+	pinMode(pinLeftMotor, OUTPUT);
+	pinMode(pinRightMotor, OUTPUT);
+	// Attach motors
+	leftMotor.attach(pinLeftMotor);
+	rightMotor.attach(pinRightMotor);
+	// Attach interrupts (done last to make sure pin direction is defined first)
+	attachInterrupt(digitalPinToInterrupt (pinThrottle), throttleChange, CHANGE);
+	attachInterrupt(digitalPinToInterrupt (pinSteering), steeringChange, CHANGE);
 }
 
+// Run loop
 void loop ()
 {
-  leftMotor.write (throttleOut);
-  rightMotor.write (steeringOut);
+	// Math will be along the lines of:
+	// leftMotor.write(throttleOut/2 + (steeringOut - middle)/2)
+	// rightMotor.write(throttleOut/2 - (steeringOut - middle)/2)
+	// Where middle is the middle value of the pwm range in microseconds
+	leftMotor.write(throttleOut);
+	rightMotor.write(throttleOut);
 }
-
