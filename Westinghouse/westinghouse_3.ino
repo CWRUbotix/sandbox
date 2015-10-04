@@ -1,7 +1,7 @@
 #include <Servo.h>
 
-#define STEERING_CTRL_PIN 2
-#define THROTTLE_CTRL_PIN 3
+#define STEERING_CTRL_PIN 3
+#define THROTTLE_CTRL_PIN 2
 #define LEFT_MOTOR_PIN 4
 #define RIGHT_MOTOR_PIN 5
 
@@ -50,7 +50,6 @@ void getThrottleTime () {
       rightMotorValue = 0;
     if (rightMotorValue < 550 && rightMotorValue > 450)
       rightMotorValue = 500;
-    //Throttle control goes here
   }
 }
 
@@ -66,6 +65,10 @@ void setup() {
 }
 
 void loop() {
-  leftMotor.write (leftMotorValue*180/1000);
-  rightMotor.write (rightMotorValue*180/1000);
+  //leftMotor.write (100);
+  //rightMotor.write (100);
+  //leftMotorValue = 500;
+  //rightMotorValue = 500;
+  leftMotor.write (leftMotorValue*18/100 + 5);
+  rightMotor.write (rightMotorValue*18/100 + 5);
 }
